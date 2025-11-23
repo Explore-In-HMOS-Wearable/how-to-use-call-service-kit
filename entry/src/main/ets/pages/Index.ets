@@ -35,7 +35,7 @@ struct Index {
       voipCall.on('voipCallUiEvent', (voipCallUiEventInfo) => {
         hilog.info(0x0000, TAG, 'voipCallUiEvent: ' + voipCallUiEventInfo);
         if (voipCallUiEventInfo?.voipCallUiEvent == voipCall.VoipCallUiEvent.VOIP_CALL_EVENT_VOICE_ANSWER) {
-          hilog.info(0x0000, '20240830', 'ready to report state: %{public}s', 'answered');
+          hilog.info(0x0000, 'Index', 'ready to report state: %{public}s', 'answered');
           voipCall.reportCallStateChange(voipCallUiEventInfo.callId, voipCall.VoipCallState.VOIP_CALL_STATE_ANSWERED);
 
           setTimeout(() => {
@@ -223,8 +223,8 @@ struct Index {
 
 
     }
-    .height("100%")
-    .width("100%")
+    .height('100%')
+    .width('100%')
     .justifyContent(FlexAlign.Center)
     .padding(20)
   }
