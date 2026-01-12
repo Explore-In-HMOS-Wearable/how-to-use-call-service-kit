@@ -2,15 +2,15 @@
 
 # How To Use Call Service Kit
 
-This codelab demonstrates how to simulate and manage VoIP calls on HarmonyOS using CallServiceKit, including call state transitions, audio controls, and error handling.
+This codelab demonstrates how to simulate and manage VoIP calls on HarmonyOS using CallServiceKit, including call state
+transitions, audio controls, and error handling.
 
-
-## Preview
+# Preview
 
 <div>    
-  <img src="screens/1.PNG" width="25%">
-  <img src="screens/2.PNG" width="25%">
-  <img src="screens/3.PNG" width="25%">
+  <img src="screenshots/1.PNG" width="20%" style="margin-right: 10px;">
+  <img src="screenshots/2.PNG" width="20%" style="margin-right: 10px;">
+  <img src="screenshots/3.PNG" width="20%" style="margin-right: 10px;">
 </div>
 
 # Use Cases
@@ -25,14 +25,12 @@ This codelab demonstrates how to simulate and manage VoIP calls on HarmonyOS usi
 
 - Error Reporting: Trigger and handle call errors such as ROUTE_BUSY or CONNECTION_FAILED.
 
-
 # Tech Stack
 
 - **Languages**: ArkTS, ArkUI
 - **Frameworks**: HarmonyOS SDK 5.0.2(14)
 - **Tools**: DevEco Studio Vers 5.1.0.828
 - **Libraries**: @kit.ArkUI, @kit.CallServiceKit, @kit.AVSessionKit, @kit.BasicServicesKit, @kit.AbilityKit
-
 
 # Directory Structure
 

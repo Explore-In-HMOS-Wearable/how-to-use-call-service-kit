@@ -11,7 +11,7 @@ const TAG = 'VoipCallPage';
 @Entry
 @Component
 struct VoipCallPage {
-  @State username: string = 'Jack';
+  private username: string = 'Jack';
   @StorageLink('voipCallState') @Watch('callStateChange') voipCallState: voipCall.VoipCallState =
     voipCall.VoipCallState.VOIP_CALL_STATE_IDLE;
   @StorageLink('voipCallMuteState') voipCallMuteState: boolean = false;
@@ -25,15 +25,16 @@ struct VoipCallPage {
   onPageShow(): void {
     const array: Permissions[] = ['ohos.permission.MICROPHONE'];
     const atManager = abilityAccessCtrl.createAtManager();
-    atManager.requestPermissionsFromUser(AppStorage.get<common.UIAbilityContext>('VoipCallAbilityContext'), array).then((data) => {
-      hilog.info(0x0000, TAG, 'requestPermissionsFromUser' + JSON.stringify(data));
-      let grantStatus: number[] = data.authResults;
-      if (grantStatus[0] === 0) {
-        hilog.info(0x0000, TAG, 'requestPermissionsFromUser grant MICROPHONE permission');
-      } else {
-        hilog.info(0x0000, TAG, 'requestPermissionsFromUser reject MICROPHONE permission');
-      }
-    })
+    atManager.requestPermissionsFromUser(AppStorage.get<common.UIAbilityContext>('VoipCallAbilityContext'), array)
+      .then((data) => {
+        hilog.info(0x0000, TAG, `requestPermissionsFromUser${JSON.stringify(data)}`);
+        let grantStatus: number[] = data.authResults;
+        if (grantStatus[0] === 0) {
+          hilog.info(0x0000, TAG, 'requestPermissionsFromUser grant MICROPHONE permission');
+        } else {
+          hilog.info(0x0000, TAG, 'requestPermissionsFromUser reject MICROPHONE permission');
+        }
+      })
   }
 
   build() {
@@ -48,58 +49,63 @@ struct VoipCallPage {
         .margin({ top: 5 })
 
       Row() {
-        if (this.voipCallState == voipCall.VoipCallState.VOIP_CALL_STATE_RINGING) {
+        if (this.voipCallState === voipCall.VoipCallState.VOIP_CALL_STATE_RINGING) {
           Image($r('app.media.ic_public_hangup'))
             .width(56)
             .height(56)
             .onClick(() => {
               hilog.info(0x0000, TAG, 'reject call clicked');
-              let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'), voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED);
+              let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'),
+                voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED);
               result.then(() => {
                 hilog.info(0x0000, TAG, 'reject call set call to disconnected success');
                 AppStorage.setOrCreate('voipCallState', voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED);
               }).catch((error: BusinessError) => {
-                hilog.error(0x0000, TAG, 'reject call set call to disconnected error code: ' + error.code);
+                hilog.error(0x0000, TAG, `reject call set call to disconnected error code: ${error.code}`);
               });
               CallDataManager.getInstance().removeCallById(AppStorage.get('voipCallId') + '');
             })
-          if (this.voipCallType == voipCall.VoipCallType.VOIP_CALL_VIDEO) {
-            if (this.isVoiceAnswerSupported == undefined || this.isVoiceAnswerSupported) {
+          if (this.voipCallType === voipCall.VoipCallType.VOIP_CALL_VIDEO) {
+            if (this.isVoiceAnswerSupported === undefined || this.isVoiceAnswerSupported) {
               Image($r('app.media.ic_public_answer'))
                 .width(56)
                 .height(56)
                 .onClick(() => {
-                  hilog.info(0x0000, TAG, 'voipCallType is ' + this.voipCallType);
+                  hilog.info(0x0000, TAG, `voipCallType is ${this.voipCallType}`);
                   hilog.info(0x0000, TAG, 'answer call clicked');
-                  let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'), voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE, voipCall.VoipCallType.VOIP_CALL_VOICE);
+                  let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'),
+                    voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE, voipCall.VoipCallType.VOIP_CALL_VOICE);
                   result.then(() => {
-                    hilog.info(0x0000, TAG, 'voipCallType is ' + this.voipCallType);
+                    hilog.info(0x0000, TAG, `voipCallType is ${this.voipCallType}`);
                     hilog.info(0x0000, TAG, 'answer call set call to active success');
                     AppStorage.setOrCreate('voipCallState', voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
                     AppStorage.setOrCreate('voipCallMuteState', false);
                   }).catch((error: BusinessError) => {
-                    hilog.error(0x0000, TAG, 'answer call set call to active error code: ' + error.code);
+                    hilog.error(0x0000, TAG, `answer call set call to active error code: ${error.code}`);
                   });
                   CallDataManager.getInstance()
-                    .updateCallStateById(AppStorage.get('voipCallId') + '', voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
+                    .updateCallStateById(AppStorage.get('voipCallId') + '',
+                      voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
                 })
                 .margin({ left: 40 })
               Image($r('app.media.ic_public_answer_video'))
                 .width(56)
                 .height(56)
                 .onClick(() => {
-                  hilog.info(0x0000, TAG, 'voipCallType is ' + this.voipCallType);
+                  hilog.info(0x0000, TAG, `voipCallType is ${this.voipCallType}`);
                   hilog.info(0x0000, TAG, 'answer call clicked');
-                  let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'), voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE, voipCall.VoipCallType.VOIP_CALL_VIDEO);
+                  let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'),
+                    voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE, voipCall.VoipCallType.VOIP_CALL_VIDEO);
                   result.then(() => {
                     hilog.info(0x0000, TAG, 'answer call set call to active success');
                     AppStorage.setOrCreate('voipCallState', voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
                     AppStorage.setOrCreate('voipCallMuteState', false);
                   }).catch((error: BusinessError) => {
-                    hilog.error(0x0000, TAG, 'answer call set call to active error code: ' + error.code);
+                    hilog.error(0x0000, TAG, `answer call set call to active error code: ${error.code}`);
                   });
                   CallDataManager.getInstance()
-                    .updateCallStateById(AppStorage.get('voipCallId') + '', voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
+                    .updateCallStateById(AppStorage.get('voipCallId') + '',
+                      voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
                 })
                 .margin({ left: 40 })
             } else {
@@ -107,18 +113,20 @@ struct VoipCallPage {
                 .width(56)
                 .height(56)
                 .onClick(() => {
-                  hilog.info(0x0000, TAG, 'voipCallType is ' + this.voipCallType);
+                  hilog.info(0x0000, TAG, `voipCallType is ${this.voipCallType}`);
                   hilog.info(0x0000, TAG, 'answer call clicked');
-                  let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'), voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE, voipCall.VoipCallType.VOIP_CALL_VIDEO);
+                  let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'),
+                    voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE, voipCall.VoipCallType.VOIP_CALL_VIDEO);
                   result.then(() => {
                     hilog.info(0x0000, TAG, 'answer call set call to active success');
                     AppStorage.setOrCreate('voipCallState', voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
                     AppStorage.setOrCreate('voipCallMuteState', false);
                   }).catch((error: BusinessError) => {
-                    hilog.error(0x0000, TAG, 'answer call set call to active error code: ' + error.code);
+                    hilog.error(0x0000, TAG, `answer call set call to active error code: ${error.code}`);
                   });
                   CallDataManager.getInstance()
-                    .updateCallStateById(AppStorage.get('voipCallId') + '', voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
+                    .updateCallStateById(AppStorage.get('voipCallId') + '',
+                      voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
                 })
                 .margin({ left: 100 })
             }
@@ -127,18 +135,20 @@ struct VoipCallPage {
               .width(56)
               .height(56)
               .onClick(() => {
-                hilog.info(0x0000, TAG, 'voipCallType is ' + this.voipCallType);
+                hilog.info(0x0000, TAG, `voipCallType is ${this.voipCallType}`);
                 hilog.info(0x0000, TAG, 'answer call clicked');
-                let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'), voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
+                let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'),
+                  voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
                 result.then(() => {
                   hilog.info(0x0000, TAG, 'answer call set call to active success');
                   AppStorage.setOrCreate('voipCallState', voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
                   AppStorage.setOrCreate('voipCallMuteState', false);
                 }).catch((error: BusinessError) => {
-                  hilog.error(0x0000, TAG, 'answer call set call to active error code: ' + error.code);
+                  hilog.error(0x0000, TAG, `answer call set call to active error code: ${error.code}`);
                 });
                 CallDataManager.getInstance()
-                  .updateCallStateById(AppStorage.get('voipCallId') + '', voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
+                  .updateCallStateById(AppStorage.get('voipCallId') + '',
+                    voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE);
               })
               .margin({ left: 100 })
           }
@@ -149,11 +159,12 @@ struct VoipCallPage {
             .onClick(() => {
               hilog.info(0x0000, TAG, 'mute button clicked');
               let result = voipCall.reportCallAudioEventChange(AppStorage.get('voipCallId'),
-                this.voipCallMuteState ? voipCall.CallAudioEvent.AUDIO_EVENT_UNMUTED : voipCall.CallAudioEvent.AUDIO_EVENT_MUTED);
+                this.voipCallMuteState ? voipCall.CallAudioEvent.AUDIO_EVENT_UNMUTED :
+                voipCall.CallAudioEvent.AUDIO_EVENT_MUTED);
               result.then(() => {
                 hilog.info(0x0000, TAG, 'reportCallAudioEventChange mute event success');
               }).catch((error: BusinessError) => {
-                hilog.error(0x0000, TAG, 'reportCallAudioEventChange mute event error code: ' + error.code);
+                hilog.error(0x0000, TAG, `reportCallAudioEventChange mute event error code: ${error.code}`);
               });
               AppStorage.setOrCreate('voipCallMuteState', !this.voipCallMuteState);
             })
@@ -162,12 +173,13 @@ struct VoipCallPage {
             .height(56)
             .onClick(() => {
               hilog.info(0x0000, TAG, 'hangup call clicked');
-              let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'), voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED);
+              let result = voipCall.reportCallStateChange(AppStorage.get('voipCallId'),
+                voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED);
               result.then(() => {
                 hilog.info(0x0000, TAG, 'hangup call set call to disconnected success');
                 AppStorage.setOrCreate('voipCallState', voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED);
               }).catch((error: BusinessError) => {
-                hilog.error(0x0000, TAG, 'hangup call set call to disconnected error code: ' + error.code);
+                hilog.error(0x0000, TAG, `hangup call set call to disconnected error code: ${error.code}`);
               });
               CallDataManager.getInstance().removeCallById(AppStorage.get('voipCallId') + '');
             })
@@ -190,9 +202,9 @@ struct VoipCallPage {
   }
 
   callStateChange() {
-    if (this.voipCallState == voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED) {
+    if (this.voipCallState === voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED) {
       setTimeout(() => {
-        if (this.voipCallState == voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED) {
+        if (this.voipCallState === voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED) {
           AppStorage.get<common.UIAbilityContext>('VoipCallAbilityContext')?.terminateSelf();
         }
       }, 1000);
@@ -200,13 +212,13 @@ struct VoipCallPage {
   }
 
   getCallStateLabel(voipCallState: voipCall.VoipCallState): string {
-    if (voipCallState == voipCall.VoipCallState.VOIP_CALL_STATE_RINGING) {
+    if (voipCallState === voipCall.VoipCallState.VOIP_CALL_STATE_RINGING) {
       return $r('app.string.incomingCall_txt').toString();
-    } else if (voipCallState == voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE) {
+    } else if (voipCallState === voipCall.VoipCallState.VOIP_CALL_STATE_ACTIVE) {
       return $r('app.string.onTheCall_txt').toString();
-    } else if (voipCallState == voipCall.VoipCallState.VOIP_CALL_STATE_DIALING) {
+    } else if (voipCallState === voipCall.VoipCallState.VOIP_CALL_STATE_DIALING) {
       return $r('app.string.dialing_txt').toString();
-    } else if (voipCallState == voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED) {
+    } else if (voipCallState === voipCall.VoipCallState.VOIP_CALL_STATE_DISCONNECTED) {
       return $r('app.string.callEnded_txt').toString();
     }
 
